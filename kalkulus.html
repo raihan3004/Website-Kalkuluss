@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Kalkulus</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+    }
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    .result {
+      margin-top: 15px;
+      padding: 12px;
+      background: #eef2ff;
+      border-radius: 8px;
+    }
+    ul {
+      line-height: 1.6;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Web Kalkulus</h1>
+    <p style="text-align:center; color:#555;">
+      Dibuat oleh <strong>Raihan Ahmad Firdaus Rukmana</strong><br>
+      NIM: 411251096 | Teknik Informatika
+    </p>
+
+    <label>Masukkan fungsi f(x):</label>
+    <input type="text" id="fungsi" placeholder="Contoh: x^2 + 3*x" />
+
+    <label>Pilih operasi:</label>
+    <select id="operasi">
+      <option value="turunan">Turunan</option>
+      <option value="integral">Integral</option>
+      <option value="limit">Limit</option>
+    </select>
+
+    <label>Nilai x (untuk evaluasi / limit):</label>
+    <input type="number" id="nilaiX" placeholder="Contoh: 2" />
+
+    <button onclick="hitung()">Hitung</button>
+
+    <div class="result" id="hasil">Hasil akan ditampilkan di sini</div>
+
+    <hr style="margin:30px 0">
+
+    <h2>Penjelasan Fitur</h2>
+    <ul>
+      <li><strong>Turunan</strong> : Digunakan untuk menghitung turunan pertama dari fungsi f(x). Pengguna juga dapat mengetahui nilai turunan pada suatu nilai x tertentu.</li>
+      <li><strong>Integral</strong> : Digunakan untuk menghitung integral tak tentu dari fungsi f(x). Hasil integral ditampilkan dengan konstanta + C.</li>
+      <li><strong>Limit</strong> : Digunakan untuk menentukan nilai limit fungsi saat x mendekati suatu nilai tertentu menggunakan pendekatan kiri dan kanan.</li>
+    </ul>
+
+    <p>
+      Web kalkulus ini dibuat sebagai alat bantu pembelajaran untuk memahami konsep dasar kalkulus
+      seperti turunan, integral, dan limit, serta sebagai penerapan pemrograman web berbasis JavaScript.
+    </p>
+
+    <footer>
+      © 2025 - Web Kalkulus | Teknik Informatika
+    </footer>
+  </div>
+
+  <script>
+    function hitung() {
+      const fungsi = document.getElementById('fungsi').value;
+      const operasi = document.getElementById('operasi').value;
+      const nilaiX = document.getElementById('nilaiX').value;
+      const hasilDiv = document.getElementById('hasil');
+
+      try {
+        let hasil = '';
+
+        if (operasi === 'turunan') {
+          const turunan = math.derivative(fungsi, 'x').toString();
+          hasil = `Turunan: ${turunan}`;
+
+          if (nilaiX !== '') {
+            const evalTurunan = math.evaluate(turunan, { x: Number(nilaiX) });
+            hasil += `<br>Nilai turunan pada x = ${nilaiX} : ${evalTurunan}`;
+          }
+        }
+
+        else if (operasi === 'integral') {
+          const integral = math.integral(fungsi, 'x').toString();
+          hasil = `Integral: ${integral} + C`;
+
+          if (nilaiX !== '') {
+            const evalIntegral = math.evaluate(integral, { x: Number(nilaiX) });
+            hasil += `<br>Nilai integral pada x = ${nilaiX} : ${evalIntegral}`;
+          }
+        }
+
+        else if (operasi === 'limit') {
+          if (nilaiX === '') {
+            hasil = 'Masukkan nilai x untuk menghitung limit.';
+          } else {
+            const x0 = Number(nilaiX);
+            const h = 1e-6;
+            const kiri = math.evaluate(fungsi, { x: x0 - h });
+            const kanan = math.evaluate(fungsi, { x: x0 + h });
+            const limit = (kiri + kanan) / 2;
+
+            hasil = `Limit x → ${x0} = ${limit}`;
+            hasil += `<br>Pendekatan kiri: ${kiri}`;
+            hasil += `<br>Pendekatan kanan: ${kanan}`;
+          }
+        }
+
+        hasilDiv.innerHTML = hasil;
+      } catch (error) {
+        hasilDiv.innerHTML = 'Terjadi kesalahan pada input fungsi atau nilai.';
+      }
+    }
+  </script>
+</body>
+</html>
